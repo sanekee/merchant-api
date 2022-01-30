@@ -8,14 +8,23 @@ import (
 )
 
 type DocsHandler struct {
-	httpPath string
-	yamlPath string
+	httpPath      string
+	yamlPath      string
+	swaggerUIOpts middleware.SwaggerUIOpts
+	rapidodcOpts  middleware.RapiDocOpts
+	redocOpts     middleware.RedocOpts
 }
 
 func NewDocsHandler(httpPath string, yamlPath string) *DocsHandler {
+	swaggerUIOpts := middleware.SwaggerUIOpts{SpecURL: yamlPath, Path: httpPath}
+	rapidocOpts := middleware.RapiDocOpts{SpecURL: yamlPath, Path: httpPath + "/rapi"}
+	redocOpts := middleware.RedocOpts{SpecURL: yamlPath, Path: httpPath + "/redoc"}
 	return &DocsHandler{
-		httpPath: httpPath,
-		yamlPath: yamlPath,
+		httpPath:      httpPath,
+		yamlPath:      yamlPath,
+		swaggerUIOpts: swaggerUIOpts,
+		rapidodcOpts:  rapidocOpts,
+		redocOpts:     redocOpts,
 	}
 }
 func (s *DocsHandler) RegisterMux(router *mux.Router) {
@@ -27,22 +36,19 @@ func (s *DocsHandler) RegisterMux(router *mux.Router) {
 }
 
 func (s *DocsHandler) get(w http.ResponseWriter, r *http.Request) {
-	opts := middleware.SwaggerUIOpts{SpecURL: s.yamlPath, Path: s.httpPath}
-	sh := middleware.SwaggerUI(opts, nil)
+	sh := middleware.SwaggerUI(s.swaggerUIOpts, nil)
 	sh.ServeHTTP(w, r)
 	return
 }
 
 func (s *DocsHandler) rapi(w http.ResponseWriter, r *http.Request) {
-	opts := middleware.RapiDocOpts{SpecURL: s.yamlPath, Path: s.httpPath + "/rapi"}
-	sh := middleware.RapiDoc(opts, nil)
+	sh := middleware.RapiDoc(s.rapidodcOpts, nil)
 	sh.ServeHTTP(w, r)
 	return
 }
 
 func (s *DocsHandler) redoc(w http.ResponseWriter, r *http.Request) {
-	opts := middleware.RedocOpts{SpecURL: s.yamlPath, Path: s.httpPath + "/redoc"}
-	sh := middleware.Redoc(opts, nil)
+	sh := middleware.Redoc(s.redocOpts, nil)
 	sh.ServeHTTP(w, r)
 	return
 }

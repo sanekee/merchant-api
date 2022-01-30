@@ -120,6 +120,8 @@ func (m *MerchantHandler) delete(w http.ResponseWriter, r *http.Request) {
 		switch true {
 		case errors.Is(err, model.ErrNoResults):
 			statusCode = http.StatusNotFound
+		case errors.Is(err, model.ErrRequest):
+			statusCode = http.StatusBadRequest
 		}
 		ResponseJSON(w, statusCode, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "Error deleting merchant"})
 		return

@@ -29,17 +29,17 @@ func NewTeamMemberHandler(path string, repo TeamMemberRepo) *TeamMemberHandler {
 		teamMemberRepo: repo,
 	}
 }
-func (m *TeamMemberHandler) RegisterMux(router *mux.Router) {
-	r := router.PathPrefix(m.path).Subrouter().StrictSlash(true)
-	r.Path("/merchant/{merchant_id}").Methods(http.MethodGet).HandlerFunc(auth.JWTAuth(m.listByMerchantID))
-	r.Path("").Methods(http.MethodPost).HandlerFunc(auth.JWTAuth(m.create))
-	r.Path("/{id}").Methods(http.MethodGet).HandlerFunc(auth.JWTAuth(m.get))
-	r.Path("/{id}").Methods(http.MethodPut).HandlerFunc(auth.JWTAuth(m.update))
-	r.Path("/{id}").Methods(http.MethodDelete).HandlerFunc(auth.JWTAuth(m.delete))
+func (t *TeamMemberHandler) RegisterMux(router *mux.Router) {
+	r := router.PathPrefix(t.path).Subrouter().StrictSlash(true)
+	r.Path("/merchant/{merchant_id}").Methods(http.MethodGet).HandlerFunc(auth.JWTAuth(t.listByMerchantID))
+	r.Path("").Methods(http.MethodPost).HandlerFunc(auth.JWTAuth(t.create))
+	r.Path("/{id}").Methods(http.MethodGet).HandlerFunc(auth.JWTAuth(t.get))
+	r.Path("/{id}").Methods(http.MethodPut).HandlerFunc(auth.JWTAuth(t.update))
+	r.Path("/{id}").Methods(http.MethodDelete).HandlerFunc(auth.JWTAuth(t.delete))
 
 }
 
-func (m *TeamMemberHandler) listByMerchantID(w http.ResponseWriter, r *http.Request) {
+func (t *TeamMemberHandler) listByMerchantID(w http.ResponseWriter, r *http.Request) {
 	merchantID := mux.Vars(r)["merchant_id"]
 	opt, err := getPaginationFromReq(r)
 	if err != nil {
@@ -47,7 +47,7 @@ func (m *TeamMemberHandler) listByMerchantID(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	teamMembers, err := m.teamMemberRepo.GetByMerchantID(merchantID, opt)
+	teamMembers, err := t.teamMemberRepo.GetByMerchantID(merchantID, opt)
 	if err != nil {
 		ResponseJSON(w, http.StatusInternalServerError, model.CommonResponse{Status: model.CommonResponseStatusError, Message: err.Error()})
 		return
@@ -55,13 +55,13 @@ func (m *TeamMemberHandler) listByMerchantID(w http.ResponseWriter, r *http.Requ
 	ResponseJSON(w, http.StatusOK, teamMembers)
 }
 
-func (m *TeamMemberHandler) create(w http.ResponseWriter, r *http.Request) {
+func (t *TeamMemberHandler) create(w http.ResponseWriter, r *http.Request) {
 	var newTeamMember model.NewTeamMember
 	if err := json.NewDecoder(r.Body).Decode(&newTeamMember); err != nil {
 		ResponseJSON(w, http.StatusBadRequest, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "invalid request"})
 		return
 	}
-	created, err := m.teamMemberRepo.Insert(&newTeamMember)
+	created, err := t.teamMemberRepo.Insert(&newTeamMember)
 	if err != nil {
 		code := http.StatusInternalServerError
 		switch true {
@@ -76,9 +76,9 @@ func (m *TeamMemberHandler) create(w http.ResponseWriter, r *http.Request) {
 	ResponseJSON(w, http.StatusCreated, created)
 }
 
-func (m *TeamMemberHandler) get(w http.ResponseWriter, r *http.Request) {
+func (t *TeamMemberHandler) get(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	teamMember, err := m.teamMemberRepo.Get(id)
+	teamMember, err := t.teamMemberRepo.Get(id)
 	if err != nil {
 		code := http.StatusInternalServerError
 		switch true {
@@ -91,14 +91,14 @@ func (m *TeamMemberHandler) get(w http.ResponseWriter, r *http.Request) {
 	ResponseJSON(w, http.StatusOK, teamMember)
 }
 
-func (m *TeamMemberHandler) update(w http.ResponseWriter, r *http.Request) {
+func (t *TeamMemberHandler) update(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	var utm model.UpdateTeamMember
 	if err := json.NewDecoder(r.Body).Decode(&utm); err != nil {
 		ResponseJSON(w, http.StatusBadRequest, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "invalid request"})
 		return
 	}
-	updated, err := m.teamMemberRepo.Update(id, &utm)
+	updated, err := t.teamMemberRepo.Update(id, &utm)
 	if err != nil {
 		statusCode := http.StatusInternalServerError
 		switch true {
@@ -113,9 +113,9 @@ func (m *TeamMemberHandler) update(w http.ResponseWriter, r *http.Request) {
 	ResponseJSON(w, http.StatusOK, updated)
 }
 
-func (m *TeamMemberHandler) delete(w http.ResponseWriter, r *http.Request) {
+func (t *TeamMemberHandler) delete(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	err := m.teamMemberRepo.Delete(id)
+	err := t.teamMemberRepo.Delete(id)
 	if err != nil {
 		statusCode := http.StatusInternalServerError
 		switch true {

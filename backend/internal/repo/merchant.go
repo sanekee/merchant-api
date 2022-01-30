@@ -14,9 +14,9 @@ func NewMerchantRepo(db *pg.DB) *MerchantRepo {
 	return &MerchantRepo{db: db}
 }
 
-func (b *MerchantRepo) GetAll(pg model.Pagination) ([]*model.Merchant, error) {
-	var m []*entity.Merchant
-	err := b.db.Model(&m).
+func (m *MerchantRepo) GetAll(pg model.Pagination) ([]*model.Merchant, error) {
+	var mcs []*entity.Merchant
+	err := m.db.Model(&mcs).
 		Limit(pg.Limit).
 		Offset(pg.Offset).
 		Order("created_at").
@@ -25,23 +25,23 @@ func (b *MerchantRepo) GetAll(pg model.Pagination) ([]*model.Merchant, error) {
 		return nil, err
 	}
 
-	ret := make([]*model.Merchant, len(m))
-	for i, mc := range m {
+	ret := make([]*model.Merchant, len(mcs))
+	for i, mc := range mcs {
 		ret[i] = mc.ToSchema()
 	}
 	return ret, nil
 }
 
-func (b *MerchantRepo) Get(id string) (*model.Merchant, error) {
-	m := entity.Merchant{
+func (m *MerchantRepo) Get(id string) (*model.Merchant, error) {
+	mc := entity.Merchant{
 		ID: id,
 	}
 
-	err := b.db.Model(&m).WherePK().Select()
+	err := m.db.Model(&mc).WherePK().Select()
 	if err != nil {
 		return nil, toAppError(err)
 	}
-	return m.ToSchema(), nil
+	return mc.ToSchema(), nil
 }
 
 func (m *MerchantRepo) Insert(nmc *model.NewMerchant) (*model.Merchant, error) {
@@ -55,9 +55,9 @@ func (m *MerchantRepo) Insert(nmc *model.NewMerchant) (*model.Merchant, error) {
 	return ent.ToSchema(), nil
 }
 
-func (b *MerchantRepo) Update(id string, umc *model.UpdateMerchant) (*model.Merchant, error) {
+func (m *MerchantRepo) Update(id string, umc *model.UpdateMerchant) (*model.Merchant, error) {
 	ent := entity.MerchantFromUpdateSchema(id, umc)
-	_, err := b.db.Model(ent).
+	_, err := m.db.Model(ent).
 		WherePK().
 		Returning("*").
 		UpdateNotZero()
@@ -67,7 +67,10 @@ func (b *MerchantRepo) Update(id string, umc *model.UpdateMerchant) (*model.Merc
 	return ent.ToSchema(), nil
 }
 
-func (b *MerchantRepo) Delete(id string) error {
-	_, err := b.db.Model(&entity.Merchant{ID: id}).WherePK().Delete()
+func (m *MerchantRepo) Delete(id string) error {
+	res, err := m.db.Model(&entity.Merchant{ID: id}).WherePK().Delete()
+	if res.RowsAffected() == 0 {
+		return model.ErrNoResults
+	}
 	return toAppError(err)
 }

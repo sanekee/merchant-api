@@ -38,7 +38,7 @@ func (t *TeamMemberRepo) Get(id string) (*model.TeamMember, error) {
 		ID: id,
 	}
 
-	err := t.db.Model(&t).WherePK().Select()
+	err := t.db.Model(&tm).WherePK().Select()
 	if err != nil {
 		return nil, toAppError(err)
 	}
@@ -69,6 +69,9 @@ func (t *TeamMemberRepo) Update(id string, umc *model.UpdateTeamMember) (*model.
 }
 
 func (t *TeamMemberRepo) Delete(id string) error {
-	_, err := t.db.Model(&entity.TeamMember{ID: id}).WherePK().Delete()
+	res, err := t.db.Model(&entity.TeamMember{ID: id}).WherePK().Delete()
+	if res.RowsAffected() == 0 {
+		return model.ErrNoResults
+	}
 	return toAppError(err)
 }
