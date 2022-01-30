@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sanekee/merchant-api/backend/internal/handler"
 	"github.com/sanekee/merchant-api/backend/internal/log"
+	"github.com/sanekee/merchant-api/backend/internal/mock"
 	go_up "github.com/ufoscout/go-up"
 )
 
@@ -32,8 +33,10 @@ func init() {
 
 func main() {
 
+	merchantRepo := mock.NewMerchantRepo(mock.GenerateMerchants(1000))
 	handlers := []MuxHandler{
 		handler.NewDocsHandler("/docs", "/openapi.yaml"),
+		handler.NewMerchantHandler("/merchant", merchantRepo),
 	}
 
 	r := mux.NewRouter()
