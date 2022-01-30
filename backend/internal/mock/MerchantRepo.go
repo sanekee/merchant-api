@@ -7,11 +7,6 @@ import (
 	"github.com/sanekee/merchant-api/backend/internal/model"
 )
 
-type GetAllOption struct {
-	Limit  int
-	Offset int
-}
-
 type MerchantRepo struct {
 	m sync.Map
 }
@@ -24,7 +19,7 @@ func NewMerchantRepo(mcs []*model.Merchant) *MerchantRepo {
 	return repo
 }
 
-func (m *MerchantRepo) GetAll(opt GetAllOption) ([]*model.Merchant, error) {
+func (m *MerchantRepo) GetAll(opt model.Pagination) ([]*model.Merchant, error) {
 
 	ret := make([]*model.Merchant, 0)
 	if opt.Limit == 0 {

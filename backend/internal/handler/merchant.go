@@ -4,17 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"github.com/sanekee/merchant-api/backend/internal/log"
-	"github.com/sanekee/merchant-api/backend/internal/mock"
 	"github.com/sanekee/merchant-api/backend/internal/model"
 )
 
 type MerchantRepo interface {
-	GetAll(opts mock.GetAllOption) ([]*model.Merchant, error)
+	GetAll(opts model.Pagination) ([]*model.Merchant, error)
 	Get(string) (*model.Merchant, error)
 	Insert(*model.Merchant) (*model.Merchant, error)
 	Update(*model.Merchant) (*model.Merchant, error)
@@ -43,7 +40,7 @@ func (m *MerchantHandler) RegisterMux(router *mux.Router) {
 }
 
 func (m *MerchantHandler) getAll(w http.ResponseWriter, r *http.Request) {
-	opt, err := parseGetAllOptions(r)
+	opt, err := getPaginationFromReq(r)
 	if err != nil {
 		ResponseJSON(w, http.StatusBadRequest, model.CommonResponse{Status: model.CommonResponseStatusError, Message: err.Error()})
 		return
@@ -124,23 +121,4 @@ func (m *MerchantHandler) delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ResponseJSON(w, http.StatusOK, model.CommonResponse{Status: model.CommonResponseStatusOk, Message: "merchant deleted"})
-}
-
-func parseGetAllOptions(r *http.Request) (mock.GetAllOption, error) {
-	opt := mock.GetAllOption{}
-	params := r.URL.Query()
-	limitStr := params.Get("limit")
-	offsetStr := params.Get("offset")
-	limit, err := strconv.ParseInt(limitStr, 10, 32)
-	if err != nil {
-		return opt, model.ErrRequest
-	}
-	offset, err := strconv.ParseInt(offsetStr, 10, 32)
-	if err != nil {
-		return opt, model.ErrRequest
-	}
-	opt.Limit = int(limit)
-	opt.Offset = int(offset)
-	log.Debug("Option: limit %d, offset %d", opt.Limit, opt.Offset)
-	return opt, nil
 }
