@@ -56,6 +56,9 @@ type PageOffset int
 // N400Error defines model for 400Error.
 type N400Error CommonResponse
 
+// N404Error defines model for 404Error.
+type N404Error CommonResponse
+
 // N500Error defines model for 500Error.
 type N500Error CommonResponse
 

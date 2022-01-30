@@ -182,10 +182,13 @@ paths:
                 #  ----- Added line  ------------------------------------
                 $ref: '#/components/schemas/TeamMember'
                 #  ---- /Added line  ------------------------------------
-                
         '400':
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
+          #  ---- /Added line  ----------------------------------------     
+        '500':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/500Error'
           #  ---- /Added line  ----------------------------------------     
 
   /teammember:
@@ -212,6 +215,10 @@ paths:
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
           #  ---- /Added line  ----------------------------------------    
+        '500':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/500Error'
+          #  ---- /Added line  ----------------------------------------    
 
   /teammember/{id}:
     get:
@@ -233,9 +240,13 @@ paths:
                 $ref: '#/components/schemas/TeamMember'
                 #  ---- /Added line  ------------------------------------
                 
-        '400':
+        '404':
           #  ----- Added line  ----------------------------------------
-          $ref: '#/components/responses/400Error'
+          $ref: '#/components/responses/404Error'
+          #  ---- /Added line  ----------------------------------------     
+        '500':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/500Error'
           #  ---- /Added line  ----------------------------------------     
     put:
       description: Update information about a team member
@@ -263,10 +274,17 @@ paths:
                 #  ----- Added line  ------------------------------------
                 $ref: '#/components/schemas/TeamMember'
                 #  ---- /Added line  ------------------------------------
-                
         '400':
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
+          #  ---- /Added line  ----------------------------------------     
+        '404':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/400Error'
+          #  ---- /Added line  ----------------------------------------     
+        '500':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/500Error'
           #  ---- /Added line  ----------------------------------------     
 
     delete:
@@ -287,10 +305,13 @@ paths:
                 #  ----- Added line  ------------------------------------
                 $ref: '#/components/schemas/CommonResponse'
                 #  ---- /Added line  ------------------------------------
-                
-        '400':
+        '404':
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
+        '500':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/500Error'
+          #  ---- /Added line  ----------------------------------------     
 
 
 components:
