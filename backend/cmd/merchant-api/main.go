@@ -57,8 +57,7 @@ func main() {
 	} else {
 		db := db.NewPGDB(pgHost, pgDB, pgPort, pgUser, pgPass)
 		merchantRepo = repo.NewMerchantRepo(db)
-		teamMemberRepo = mock.NewTeamMemberRepo(nil, mock.GenerateTeamMembers(1000, "test-0"))
-		// teamMemberRepo = repo.NewTeamMemberRepo(db)
+		teamMemberRepo = repo.NewTeamMemberRepo(db)
 	}
 	handlers := []MuxHandler{
 		handler.NewDocsHandler("/docs", "/openapi.yaml"),

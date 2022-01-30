@@ -7,6 +7,7 @@ var (
 	ErrExists    = Errorf("error: record exists")
 	ErrRequest   = Errorf("error: bad request")
 	ErrServer    = Errorf("error: internal server error")
+	ErrDuplicate = Errorf("error: duplicated record")
 )
 
 type Error struct {

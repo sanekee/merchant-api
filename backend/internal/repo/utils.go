@@ -2,6 +2,7 @@ package repo
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/go-pg/pg/v10"
 	"github.com/sanekee/merchant-api/backend/internal/log"
@@ -15,6 +16,14 @@ func toAppError(err error) error {
 	if errors.Is(err, pg.ErrNoRows) {
 		return model.ErrNoResults
 	}
-	log.Error("Repo Error %s", err.Error())
+	errStr := err.Error()
+	log.Error("Repo Error %s", errStr)
+
+	if strings.Contains(errStr, "#23503") {
+		return model.ErrRequest
+	}
+	if strings.Contains(errStr, "#23505") {
+		return model.ErrDuplicate
+	}
 	return model.ErrServer
 }

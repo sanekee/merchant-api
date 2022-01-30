@@ -66,7 +66,11 @@ func (m *MerchantHandler) create(w http.ResponseWriter, r *http.Request) {
 	}
 	created, err := m.merchantRepo.Insert(merchant)
 	if err != nil {
-		ResponseJSON(w, http.StatusInternalServerError, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "Error creating merchant"})
+		code := http.StatusInternalServerError
+		if errors.Is(err, model.ErrDuplicate) {
+			code = http.StatusConflict
+		}
+		ResponseJSON(w, code, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "Error creating merchant"})
 		return
 	}
 	ResponseJSON(w, http.StatusCreated, created)
@@ -100,8 +104,11 @@ func (m *MerchantHandler) update(w http.ResponseWriter, r *http.Request) {
 	updated, err := m.merchantRepo.Update(&merchant)
 	if err != nil {
 		statusCode := http.StatusInternalServerError
-		if errors.Is(err, model.ErrNoResults) {
+		switch true {
+		case errors.Is(err, model.ErrNoResults):
 			statusCode = http.StatusNotFound
+		case errors.Is(err, model.ErrDuplicate):
+			statusCode = http.StatusConflict
 		}
 		ResponseJSON(w, statusCode, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "error updating merchant"})
 		return

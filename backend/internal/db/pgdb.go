@@ -14,7 +14,7 @@ func NewPGDB(pgHost string, pgDB string, pgPort int, pgUser string, pgPass strin
 		Database: pgDB,
 		Addr:     fmt.Sprintf("%s:%d", pgHost, pgPort),
 	}
-	log.Info("connecting to pgdb %s:%s %s %s",
+	log.Info("connecting to pgdb %s:%d %s %s",
 		pgHost, pgPort, pgDB, pgUser)
 	pg := pg.Connect(opt)
 	return pg

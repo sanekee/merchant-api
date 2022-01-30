@@ -68,7 +68,14 @@ func (m *TeamMemberHandler) create(w http.ResponseWriter, r *http.Request) {
 	}
 	created, err := m.teamMemberRepo.Insert(teamMember)
 	if err != nil {
-		ResponseJSON(w, http.StatusInternalServerError, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "Error creating team member"})
+		code := http.StatusInternalServerError
+		switch true {
+		case errors.Is(err, model.ErrRequest):
+			code = http.StatusBadRequest
+		case errors.Is(err, model.ErrDuplicate):
+			code = http.StatusConflict
+		}
+		ResponseJSON(w, code, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "Error creating team member"})
 		return
 	}
 	ResponseJSON(w, http.StatusCreated, created)
@@ -102,8 +109,11 @@ func (m *TeamMemberHandler) update(w http.ResponseWriter, r *http.Request) {
 	updated, err := m.teamMemberRepo.Update(&teamMember)
 	if err != nil {
 		statusCode := http.StatusInternalServerError
-		if errors.Is(err, model.ErrNoResults) {
+		switch true {
+		case errors.Is(err, model.ErrNoResults):
 			statusCode = http.StatusNotFound
+		case errors.Is(err, model.ErrDuplicate):
+			statusCode = http.StatusConflict
 		}
 		ResponseJSON(w, statusCode, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "error updating teamMember"})
 		return
