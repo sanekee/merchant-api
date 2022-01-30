@@ -11,7 +11,7 @@ import (
 )
 
 type MerchantRepo interface {
-	GetAll(opts model.Pagination) ([]*model.Merchant, error)
+	GetAll(model.Pagination) ([]*model.Merchant, error)
 	Get(string) (*model.Merchant, error)
 	Insert(*model.Merchant) (*model.Merchant, error)
 	Update(*model.Merchant) (*model.Merchant, error)
