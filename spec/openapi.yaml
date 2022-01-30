@@ -34,6 +34,10 @@ paths:
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
           #  ---- /Added line  ----------------------------------------
+        '500':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/500Error'
+          #  ---- /Added line  ----------------------------------------
 
     post:
       description: create a new merchant
@@ -46,7 +50,7 @@ paths:
               $ref: '#/components/schemas/NewMerchant'
               #  ---- /Added line  ------------------------------------
       responses:
-        '200':
+        '201':
           description: Successfully created a new merchant 
           content:
             application/json:
@@ -58,6 +62,10 @@ paths:
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
           #  ---- /Added line  ----------------------------------------    
+        '500':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/500Error'
+          #  ---- /Added line  ----------------------------------------
 
   /merchant/{id}:
     get:
@@ -78,11 +86,14 @@ paths:
                 #  ----- Added line  ------------------------------------
                 $ref: '#/components/schemas/Merchant'
                 #  ---- /Added line  ------------------------------------
-                
-        '400':
+        '404':
           #  ----- Added line  ----------------------------------------
-          $ref: '#/components/responses/400Error'
+          $ref: '#/components/responses/404Error'
           #  ---- /Added line  ----------------------------------------     
+        '500':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/500Error'
+          #  ---- /Added line  ----------------------------------------
     put:
       description: Update information about a merchant
       parameters:
@@ -109,11 +120,18 @@ paths:
                 #  ----- Added line  ------------------------------------
                 $ref: '#/components/schemas/Merchant'
                 #  ---- /Added line  ------------------------------------
-                
         '400':
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
           #  ---- /Added line  ----------------------------------------     
+        '404':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/404Error'
+          #  ---- /Added line  ----------------------------------------     
+        '500':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/500Error'
+          #  ---- /Added line  ----------------------------------------
 
     delete:
       description: Delete a merchant
@@ -133,10 +151,13 @@ paths:
                 #  ----- Added line  ------------------------------------
                 $ref: '#/components/schemas/CommonResponse'
                 #  ---- /Added line  ------------------------------------
-                
-        '400':
+        '404':
           #  ----- Added line  ----------------------------------------
-          $ref: '#/components/responses/400Error'
+          $ref: '#/components/responses/404Error'
+        '500':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/500Error'
+          #  ---- /Added line  ----------------------------------------
 
   /teammember/merchant/{merchant_id}:
     get:
@@ -313,14 +334,18 @@ components:
     Merchant:
       type: object
       required:
+        - id
         - code
       properties:
         id:
           type: string
         code:
-            type: string
+          type: string
     CommonResponse:
       type: object
+      required:
+        - status
+        - message
       properties:
         status:
           type: string
@@ -336,6 +361,7 @@ components:
       name: limit
       in: query
       description: Limits the number of items on a page
+      required: true
       schema:
         type: integer
         minimum: 0
@@ -345,6 +371,7 @@ components:
       name: offset
       in: query
       description: Specifies the page number of the item to be displayed
+      required: true
       schema:
         type: integer
         minimum: 0
@@ -353,6 +380,22 @@ components:
   responses:
     400Error:
       description: Invalid request
+      content:
+        application/json:
+          schema:
+            #  ----- Added line  ------------------------------------
+            $ref: '#/components/schemas/CommonResponse'
+            #  ---- /Added line  ------------------------------------
+    404Error:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            #  ----- Added line  ------------------------------------
+            $ref: '#/components/schemas/CommonResponse'
+            #  ---- /Added line  ------------------------------------
+    500Error:
+      description: Internal Server Error
       content:
         application/json:
           schema:
