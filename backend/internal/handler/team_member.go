@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/sanekee/merchant-api/backend/internal/handler/auth"
 	"github.com/sanekee/merchant-api/backend/internal/model"
 )
 
@@ -30,11 +31,11 @@ func NewTeamMemberHandler(path string, repo TeamMemberRepo) *TeamMemberHandler {
 }
 func (m *TeamMemberHandler) RegisterMux(router *mux.Router) {
 	r := router.PathPrefix(m.path).Subrouter().StrictSlash(true)
-	r.Path("/merchant/{merchant_id}").Methods(http.MethodGet).HandlerFunc(m.listByMerchantID)
-	r.Path("").Methods(http.MethodPost).HandlerFunc(m.create)
-	r.Path("/{id}").Methods(http.MethodGet).HandlerFunc(m.get)
-	r.Path("/{id}").Methods(http.MethodPut).HandlerFunc(m.update)
-	r.Path("/{id}").Methods(http.MethodDelete).HandlerFunc(m.delete)
+	r.Path("/merchant/{merchant_id}").Methods(http.MethodGet).HandlerFunc(auth.JWTAuth(m.listByMerchantID))
+	r.Path("").Methods(http.MethodPost).HandlerFunc(auth.JWTAuth(m.create))
+	r.Path("/{id}").Methods(http.MethodGet).HandlerFunc(auth.JWTAuth(m.get))
+	r.Path("/{id}").Methods(http.MethodPut).HandlerFunc(auth.JWTAuth(m.update))
+	r.Path("/{id}").Methods(http.MethodDelete).HandlerFunc(auth.JWTAuth(m.delete))
 
 }
 
