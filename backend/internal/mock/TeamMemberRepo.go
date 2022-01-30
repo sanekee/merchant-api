@@ -8,11 +8,12 @@ import (
 )
 
 type TeamMemberRepo struct {
-	m sync.Map
+	m   sync.Map
+	err error
 }
 
-func NewTeamMemberRepo(mcs []*model.TeamMember) *TeamMemberRepo {
-	repo := &TeamMemberRepo{}
+func NewTeamMemberRepo(retErr error, mcs []*model.TeamMember) *TeamMemberRepo {
+	repo := &TeamMemberRepo{err: retErr}
 	for _, mc := range mcs {
 		repo.m.Store(mc.Id, mc)
 	}
@@ -20,6 +21,9 @@ func NewTeamMemberRepo(mcs []*model.TeamMember) *TeamMemberRepo {
 }
 
 func (m *TeamMemberRepo) GetByMerchantID(merchantID string, opt model.Pagination) ([]*model.TeamMember, error) {
+	if m.err != nil {
+		return nil, m.err
+	}
 
 	ret := make([]*model.TeamMember, 0)
 	if opt.Limit == 0 {
@@ -44,6 +48,9 @@ func (m *TeamMemberRepo) GetByMerchantID(merchantID string, opt model.Pagination
 }
 
 func (m *TeamMemberRepo) Get(id string) (*model.TeamMember, error) {
+	if m.err != nil {
+		return nil, m.err
+	}
 	if mc, ok := m.m.Load(id); ok {
 		return mc.(*model.TeamMember), nil
 	}
@@ -51,6 +58,9 @@ func (m *TeamMemberRepo) Get(id string) (*model.TeamMember, error) {
 }
 
 func (m *TeamMemberRepo) Update(mc *model.TeamMember) (*model.TeamMember, error) {
+	if m.err != nil {
+		return nil, m.err
+	}
 	if _, ok := m.m.Load(mc.Id); !ok {
 		return nil, model.ErrNoResults
 	}
@@ -59,6 +69,9 @@ func (m *TeamMemberRepo) Update(mc *model.TeamMember) (*model.TeamMember, error)
 }
 
 func (m *TeamMemberRepo) Insert(mc *model.TeamMember) (*model.TeamMember, error) {
+	if m.err != nil {
+		return nil, m.err
+	}
 	if _, ok := m.m.Load(mc.Id); ok {
 		return nil, model.ErrNoResults
 	}
@@ -67,6 +80,9 @@ func (m *TeamMemberRepo) Insert(mc *model.TeamMember) (*model.TeamMember, error)
 }
 
 func (m *TeamMemberRepo) Delete(id string) error {
+	if m.err != nil {
+		return m.err
+	}
 	if _, ok := m.m.Load(id); !ok {
 		return model.ErrNoResults
 	}
