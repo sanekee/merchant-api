@@ -18,6 +18,7 @@ type MuxHandler interface {
 var (
 	port    int
 	docPath string
+	mockDB  bool
 )
 
 func init() {
@@ -29,12 +30,18 @@ func init() {
 	}
 	port = up.GetIntOrDefault("APP_PORT", 8123)
 	docPath = up.GetStringOrDefault("APP_SPEC", "./spec")
+	mockDB = up.GetBoolOrDefault("APP_MOCKDB", true)
 }
 
 func main() {
 
-	merchantRepo := mock.NewMerchantRepo(nil, mock.GenerateMerchants(1000))
-	teamMemberRepo := mock.NewTeamMemberRepo(nil, mock.GenerateTeamMembers(1000, "test-0"))
+	var merchantRepo handler.MerchantRepo
+	var teamMemberRepo handler.TeamMemberRepo
+
+	if mockDB {
+		merchantRepo = mock.NewMerchantRepo(nil, mock.GenerateMerchants(1000))
+		teamMemberRepo = mock.NewTeamMemberRepo(nil, mock.GenerateTeamMembers(1000, "test-0"))
+	}
 	handlers := []MuxHandler{
 		handler.NewDocsHandler("/docs", "/openapi.yaml"),
 		handler.NewMerchantHandler("/merchant", merchantRepo),
