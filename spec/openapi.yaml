@@ -1,0 +1,363 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: Merchant API
+  description: A Simple Merchant API 
+
+servers:
+  - url: http://127.0.0.1:8123
+
+security:
+  - BearerAuth: []
+
+paths:
+  /merchant:
+    get:
+      description: Returns a list of merchants
+      parameters:
+        #  ----- Added line  ------------------------------------------
+        - $ref: '#/components/parameters/PageLimit'
+        - $ref: '#/components/parameters/PageOffset'
+        #  ---- /Added line  ------------------------------------------
+      responses:
+        '200':
+          description: Successfully returned a list of merchants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  #  ----- Added line  --------------------------------
+                  $ref: '#/components/schemas/Merchant'
+                  #  ---- /Added line  --------------------------------
+        '400':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/400Error'
+          #  ---- /Added line  ----------------------------------------
+
+    post:
+      description: create a new merchant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              #  ----- Added line  ------------------------------------
+              $ref: '#/components/schemas/NewMerchant'
+              #  ---- /Added line  ------------------------------------
+      responses:
+        '200':
+          description: Successfully created a new merchant 
+          content:
+            application/json:
+              schema:
+                #  ----- Added line  --------------------------------
+                $ref: '#/components/schemas/Merchant'
+                #  ---- /Added line  --------------------------------
+        '400':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/400Error'
+          #  ---- /Added line  ----------------------------------------    
+
+  /merchant/{id}:
+    get:
+      description: Obtain information about a merchant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          
+      responses:
+        '200':
+          description: Successfully returned a merchant
+          content:
+            application/json:
+              schema:
+                #  ----- Added line  ------------------------------------
+                $ref: '#/components/schemas/Merchant'
+                #  ---- /Added line  ------------------------------------
+                
+        '400':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/400Error'
+          #  ---- /Added line  ----------------------------------------     
+    put:
+      description: Update information about a merchant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              #  ----- Added line  ------------------------------------
+              $ref: '#/components/schemas/Merchant'
+              #  ---- /Added line  ------------------------------------
+          
+      responses:
+        '200':
+          description: Successfully updated a merchant
+          content:
+            application/json:
+              schema:
+                #  ----- Added line  ------------------------------------
+                $ref: '#/components/schemas/Merchant'
+                #  ---- /Added line  ------------------------------------
+                
+        '400':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/400Error'
+          #  ---- /Added line  ----------------------------------------     
+
+    delete:
+      description: Delete a merchant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          
+      responses:
+        '200':
+          description: Successfully deleted a merchant
+          content:
+            application/json:
+              schema:
+                #  ----- Added line  ------------------------------------
+                $ref: '#/components/schemas/CommonResponse'
+                #  ---- /Added line  ------------------------------------
+                
+        '400':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/400Error'
+
+  /teammember/merchant/{merchant_id}:
+    get:
+      description: Obtain list of team members for a merchant id
+      parameters:
+        - name: merchant_id
+          in: path
+          required: true
+          schema:
+            type: string
+        #  ----- Added line  ------------------------------------------
+        - $ref: '#/components/parameters/PageLimit'
+        - $ref: '#/components/parameters/PageOffset'
+        #  ---- /Added line  ------------------------------------------
+          
+      responses:
+        '200':
+          description: Successfully returned a list of team members
+          content:
+            application/json:
+              schema:
+                #  ----- Added line  ------------------------------------
+                $ref: '#/components/schemas/TeamMember'
+                #  ---- /Added line  ------------------------------------
+                
+        '400':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/400Error'
+          #  ---- /Added line  ----------------------------------------     
+
+  /teammember:
+    post:
+      description: 'Create a new team member under a merchant'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              #  ----- Added line  ------------------------------------
+              $ref: '#/components/schemas/NewTeamMember'
+              #  ---- /Added line  ------------------------------------
+      responses:
+        '200':
+          description: Successfully created a new team member 
+          content:
+            application/json:
+              schema:
+                #  ----- Added line  --------------------------------
+                $ref: '#/components/schemas/TeamMember'
+                #  ---- /Added line  --------------------------------
+        '400':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/400Error'
+          #  ---- /Added line  ----------------------------------------    
+
+  /teammember/{id}:
+    get:
+      description: Obtain information about a team member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          
+      responses:
+        '200':
+          description: Successfully returned a team member
+          content:
+            application/json:
+              schema:
+                #  ----- Added line  ------------------------------------
+                $ref: '#/components/schemas/TeamMember'
+                #  ---- /Added line  ------------------------------------
+                
+        '400':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/400Error'
+          #  ---- /Added line  ----------------------------------------     
+    put:
+      description: Update information about a team member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              #  ----- Added line  ------------------------------------
+              $ref: '#/components/schemas/TeamMember'
+              #  ---- /Added line  ------------------------------------
+          
+      responses:
+        '200':
+          description: Successfully updated a team member
+          content:
+            application/json:
+              schema:
+                #  ----- Added line  ------------------------------------
+                $ref: '#/components/schemas/TeamMember'
+                #  ---- /Added line  ------------------------------------
+                
+        '400':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/400Error'
+          #  ---- /Added line  ----------------------------------------     
+
+    delete:
+      description: Delete a team member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          
+      responses:
+        '200':
+          description: Successfully deleted a team member
+          content:
+            application/json:
+              schema:
+                #  ----- Added line  ------------------------------------
+                $ref: '#/components/schemas/CommonResponse'
+                #  ---- /Added line  ------------------------------------
+                
+        '400':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/400Error'
+
+
+components:
+  securitySchemes:
+    BearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    NewTeamMember:
+      type: object
+      required:
+        - email
+        - merchant_id
+      properties:
+        email:
+          type: string
+        merchant_id:
+          type: string
+    TeamMember:
+      type: object
+      required:
+        - email
+        - merchant_id
+        - id
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        merchant_id:
+          type: string
+    NewMerchant:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+            type: string
+    Merchant:
+      type: object
+      required:
+        - code
+      properties:
+        id:
+          type: string
+        code:
+            type: string
+    CommonResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+            - error
+        message:
+          type: string
+
+  #  ----- Added lines  ----------------------------------------
+  parameters:
+    PageLimit:
+      name: limit
+      in: query
+      description: Limits the number of items on a page
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 100
+      
+    PageOffset:
+      name: offset
+      in: query
+      description: Specifies the page number of the item to be displayed
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 1000
+
+  responses:
+    400Error:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            #  ----- Added line  ------------------------------------
+            $ref: '#/components/schemas/CommonResponse'
+            #  ---- /Added line  ------------------------------------
+
+  #  ---- /Added lines  ----------------------------------------
