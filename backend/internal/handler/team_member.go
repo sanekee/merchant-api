@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/sanekee/merchant-api/backend/internal/model"
 )
@@ -13,8 +12,8 @@ import (
 type TeamMemberRepo interface {
 	GetByMerchantID(teamMemberID string, opts model.Pagination) ([]*model.TeamMember, error)
 	Get(string) (*model.TeamMember, error)
-	Insert(*model.TeamMember) (*model.TeamMember, error)
-	Update(*model.TeamMember) (*model.TeamMember, error)
+	Insert(*model.NewTeamMember) (*model.TeamMember, error)
+	Update(string, *model.UpdateTeamMember) (*model.TeamMember, error)
 	Delete(string) error
 }
 
@@ -61,12 +60,7 @@ func (m *TeamMemberHandler) create(w http.ResponseWriter, r *http.Request) {
 		ResponseJSON(w, http.StatusBadRequest, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "invalid request"})
 		return
 	}
-	teamMember := &model.TeamMember{
-		Id:         uuid.NewString(),
-		Email:      newTeamMember.Email,
-		MerchantId: newTeamMember.MerchantId,
-	}
-	created, err := m.teamMemberRepo.Insert(teamMember)
+	created, err := m.teamMemberRepo.Insert(&newTeamMember)
 	if err != nil {
 		code := http.StatusInternalServerError
 		switch true {
@@ -86,7 +80,8 @@ func (m *TeamMemberHandler) get(w http.ResponseWriter, r *http.Request) {
 	teamMember, err := m.teamMemberRepo.Get(id)
 	if err != nil {
 		code := http.StatusInternalServerError
-		if errors.Is(err, model.ErrNoResults) {
+		switch true {
+		case errors.Is(err, model.ErrNoResults):
 			code = http.StatusNotFound
 		}
 		ResponseJSON(w, code, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "Error getting team member"})
@@ -97,16 +92,12 @@ func (m *TeamMemberHandler) get(w http.ResponseWriter, r *http.Request) {
 
 func (m *TeamMemberHandler) update(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	var teamMember model.TeamMember
-	if err := json.NewDecoder(r.Body).Decode(&teamMember); err != nil {
+	var utm model.UpdateTeamMember
+	if err := json.NewDecoder(r.Body).Decode(&utm); err != nil {
 		ResponseJSON(w, http.StatusBadRequest, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "invalid request"})
 		return
 	}
-	if teamMember.Id != id {
-		ResponseJSON(w, http.StatusBadRequest, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "invalid request, teamMember id is different"})
-		return
-	}
-	updated, err := m.teamMemberRepo.Update(&teamMember)
+	updated, err := m.teamMemberRepo.Update(id, &utm)
 	if err != nil {
 		statusCode := http.StatusInternalServerError
 		switch true {
@@ -126,7 +117,8 @@ func (m *TeamMemberHandler) delete(w http.ResponseWriter, r *http.Request) {
 	err := m.teamMemberRepo.Delete(id)
 	if err != nil {
 		statusCode := http.StatusInternalServerError
-		if errors.Is(err, model.ErrNoResults) {
+		switch true {
+		case errors.Is(err, model.ErrNoResults):
 			statusCode = http.StatusNotFound
 		}
 		ResponseJSON(w, statusCode, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "Error deleting team member"})

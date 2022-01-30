@@ -1,8 +1,6 @@
 package repo
 
 import (
-	"time"
-
 	"github.com/go-pg/pg/v10"
 	"github.com/sanekee/merchant-api/backend/internal/entity"
 	"github.com/sanekee/merchant-api/backend/internal/model"
@@ -22,6 +20,7 @@ func (t *TeamMemberRepo) GetByMerchantID(merchant_id string, page model.Paginati
 		Limit(page.Limit).
 		Offset(page.Offset).
 		Where("merchant_id = ?", merchant_id).
+		Order("created_at").
 		Select()
 	if err != nil {
 		return nil, err
@@ -46,10 +45,8 @@ func (t *TeamMemberRepo) Get(id string) (*model.TeamMember, error) {
 	return tm.ToSchema(), nil
 }
 
-func (t *TeamMemberRepo) Insert(tm *model.TeamMember) (*model.TeamMember, error) {
-	ent := entity.TeamMemberFromSchema(tm)
-	now := time.Now()
-	ent.UpdatedAt = &now
+func (t *TeamMemberRepo) Insert(ntm *model.NewTeamMember) (*model.TeamMember, error) {
+	ent := entity.CreateTeamMemberFromNewSchema(ntm)
 	_, err := t.db.Model(ent).
 		Returning("*").
 		Insert()
@@ -59,14 +56,12 @@ func (t *TeamMemberRepo) Insert(tm *model.TeamMember) (*model.TeamMember, error)
 	return ent.ToSchema(), nil
 }
 
-func (t *TeamMemberRepo) Update(mc *model.TeamMember) (*model.TeamMember, error) {
-	ent := entity.TeamMemberFromSchema(mc)
-	now := time.Now()
-	ent.UpdatedAt = &now
+func (t *TeamMemberRepo) Update(id string, umc *model.UpdateTeamMember) (*model.TeamMember, error) {
+	ent := entity.TeamMemberFromUpdateSchema(id, umc)
 	_, err := t.db.Model(ent).
 		WherePK().
 		Returning("*").
-		Update()
+		UpdateNotZero()
 	if err != nil {
 		return nil, toAppError(err)
 	}

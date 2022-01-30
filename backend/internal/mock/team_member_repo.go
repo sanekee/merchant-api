@@ -3,7 +3,9 @@ package mock
 import (
 	"fmt"
 	"sync"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/sanekee/merchant-api/backend/internal/model"
 )
 
@@ -57,26 +59,38 @@ func (m *TeamMemberRepo) Get(id string) (*model.TeamMember, error) {
 	return nil, model.ErrNoResults
 }
 
-func (m *TeamMemberRepo) Update(mc *model.TeamMember) (*model.TeamMember, error) {
+func (m *TeamMemberRepo) Update(id string, umc *model.UpdateTeamMember) (*model.TeamMember, error) {
 	if m.err != nil {
 		return nil, m.err
 	}
-	if _, ok := m.m.Load(mc.Id); !ok {
+
+	tmt, ok := m.m.Load(id)
+	if !ok {
 		return nil, model.ErrNoResults
 	}
-	m.m.Store(mc.Id, mc)
-	return mc, nil
+	tm := tmt.(*model.TeamMember)
+	tm.Email = umc.Email
+	tm.MerchantId = umc.MerchantId
+	m.m.Store(id, tm)
+	return tm, nil
 }
 
-func (m *TeamMemberRepo) Insert(mc *model.TeamMember) (*model.TeamMember, error) {
+func (m *TeamMemberRepo) Insert(ntm *model.NewTeamMember) (*model.TeamMember, error) {
 	if m.err != nil {
 		return nil, m.err
 	}
-	if _, ok := m.m.Load(mc.Id); ok {
-		return nil, model.ErrNoResults
+
+	now := time.Now().UTC()
+	tm := &model.TeamMember{
+		Id:         uuid.NewString(),
+		Email:      ntm.Email,
+		MerchantId: ntm.MerchantId,
+		CreatedAt:  &now,
+		UpdatedAt:  &now,
 	}
-	m.m.Store(mc.Id, mc)
-	return mc, nil
+
+	m.m.Store(tm.Id, tm)
+	return tm, nil
 }
 
 func (m *TeamMemberRepo) Delete(id string) error {

@@ -55,6 +55,17 @@ type TeamMember struct {
 	UpdatedAt  *time.Time `json:"updated_at,omitempty"`
 }
 
+// UpdateMerchant defines model for UpdateMerchant.
+type UpdateMerchant struct {
+	Code string `json:"code"`
+}
+
+// UpdateTeamMember defines model for UpdateTeamMember.
+type UpdateTeamMember struct {
+	Email      string `json:"email"`
+	MerchantId string `json:"merchant_id"`
+}
+
 // PageLimit defines model for PageLimit.
 type PageLimit int
 
@@ -66,6 +77,9 @@ type N400Error CommonResponse
 
 // N404Error defines model for 404Error.
 type N404Error CommonResponse
+
+// N409Error defines model for 409Error.
+type N409Error CommonResponse
 
 // N500Error defines model for 500Error.
 type N500Error CommonResponse
@@ -83,7 +97,7 @@ type GetMerchantParams struct {
 type PostMerchantJSONBody NewMerchant
 
 // PutMerchantIdJSONBody defines parameters for PutMerchantId.
-type PutMerchantIdJSONBody Merchant
+type PutMerchantIdJSONBody UpdateMerchant
 
 // PostTeammemberJSONBody defines parameters for PostTeammember.
 type PostTeammemberJSONBody NewTeamMember
@@ -98,7 +112,7 @@ type GetTeammemberMerchantMerchantIdParams struct {
 }
 
 // PutTeammemberIdJSONBody defines parameters for PutTeammemberId.
-type PutTeammemberIdJSONBody TeamMember
+type PutTeammemberIdJSONBody UpdateTeamMember
 
 // PostMerchantJSONRequestBody defines body for PostMerchant for application/json ContentType.
 type PostMerchantJSONRequestBody PostMerchantJSONBody

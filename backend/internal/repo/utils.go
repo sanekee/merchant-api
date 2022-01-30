@@ -19,11 +19,12 @@ func toAppError(err error) error {
 	errStr := err.Error()
 	log.Error("Repo Error %s", errStr)
 
-	if strings.Contains(errStr, "#23503") {
+	switch true {
+	case strings.Contains(errStr, "#23502"), strings.Contains(errStr, "#23503"):
 		return model.ErrRequest
-	}
-	if strings.Contains(errStr, "#23505") {
+	case strings.Contains(errStr, "#23505"):
 		return model.ErrDuplicate
+
 	}
 	return model.ErrServer
 }

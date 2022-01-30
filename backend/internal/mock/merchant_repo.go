@@ -3,7 +3,9 @@ package mock
 import (
 	"fmt"
 	"sync"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/sanekee/merchant-api/backend/internal/model"
 )
 
@@ -55,27 +57,36 @@ func (m *MerchantRepo) Get(id string) (*model.Merchant, error) {
 	return nil, model.ErrNoResults
 }
 
-func (m *MerchantRepo) Update(mc *model.Merchant) (*model.Merchant, error) {
+func (m *MerchantRepo) Update(id string, umc *model.UpdateMerchant) (*model.Merchant, error) {
 	if m.err != nil {
 		return nil, m.err
 	}
 
-	if _, ok := m.m.Load(mc.Id); !ok {
+	mct, ok := m.m.Load(id)
+	if !ok {
 		return nil, model.ErrNoResults
 	}
-	m.m.Store(mc.Id, mc)
+
+	mc := mct.(*model.Merchant)
+	mc.Code = umc.Code
+	m.m.Store(id, mc)
 	return mc, nil
 }
 
-func (m *MerchantRepo) Insert(mc *model.Merchant) (*model.Merchant, error) {
+func (m *MerchantRepo) Insert(nmc *model.NewMerchant) (*model.Merchant, error) {
 	if m.err != nil {
 		return nil, m.err
 	}
 
-	if _, ok := m.m.Load(mc.Id); ok {
-		return nil, model.ErrNoResults
+	now := time.Now().UTC()
+	mc := &model.Merchant{
+		Id:        uuid.NewString(),
+		Code:      nmc.Code,
+		CreatedAt: &now,
+		UpdatedAt: &now,
 	}
-	m.m.Store(mc.Id, mc)
+
+	m.m.Store(mc.Id, nmc)
 	return mc, nil
 }
 

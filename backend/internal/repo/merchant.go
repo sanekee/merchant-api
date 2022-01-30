@@ -1,8 +1,6 @@
 package repo
 
 import (
-	"time"
-
 	"github.com/go-pg/pg/v10"
 	"github.com/sanekee/merchant-api/backend/internal/entity"
 	"github.com/sanekee/merchant-api/backend/internal/model"
@@ -21,6 +19,7 @@ func (b *MerchantRepo) GetAll(pg model.Pagination) ([]*model.Merchant, error) {
 	err := b.db.Model(&m).
 		Limit(pg.Limit).
 		Offset(pg.Offset).
+		Order("created_at").
 		Select()
 	if err != nil {
 		return nil, err
@@ -45,10 +44,8 @@ func (b *MerchantRepo) Get(id string) (*model.Merchant, error) {
 	return m.ToSchema(), nil
 }
 
-func (m *MerchantRepo) Insert(mc *model.Merchant) (*model.Merchant, error) {
-	ent := entity.MerchantFromSchema(mc)
-	now := time.Now()
-	ent.UpdatedAt = &now
+func (m *MerchantRepo) Insert(nmc *model.NewMerchant) (*model.Merchant, error) {
+	ent := entity.CreateMerchantFromNewSchema(nmc)
 	_, err := m.db.Model(ent).
 		Returning("*").
 		Insert()
@@ -58,14 +55,12 @@ func (m *MerchantRepo) Insert(mc *model.Merchant) (*model.Merchant, error) {
 	return ent.ToSchema(), nil
 }
 
-func (b *MerchantRepo) Update(mc *model.Merchant) (*model.Merchant, error) {
-	ent := entity.MerchantFromSchema(mc)
-	now := time.Now()
-	ent.UpdatedAt = &now
+func (b *MerchantRepo) Update(id string, umc *model.UpdateMerchant) (*model.Merchant, error) {
+	ent := entity.MerchantFromUpdateSchema(id, umc)
 	_, err := b.db.Model(ent).
 		WherePK().
 		Returning("*").
-		Update()
+		UpdateNotZero()
 	if err != nil {
 		return nil, toAppError(err)
 	}

@@ -112,7 +112,7 @@ paths:
           application/json:
             schema:
               #  ----- Added line  ------------------------------------
-              $ref: '#/components/schemas/Merchant'
+              $ref: '#/components/schemas/UpdateMerchant'
               #  ---- /Added line  ------------------------------------
           
       responses:
@@ -274,7 +274,7 @@ paths:
           application/json:
             schema:
               #  ----- Added line  ------------------------------------
-              $ref: '#/components/schemas/TeamMember'
+              $ref: '#/components/schemas/UpdateTeamMember'
               #  ---- /Added line  ------------------------------------
           
       responses:
@@ -348,6 +348,16 @@ components:
           type: string
         merchant_id:
           type: string
+    UpdateTeamMember:
+      type: object
+      required:
+        - email
+        - merchant_id
+      properties:
+        email:
+          type: string
+        merchant_id:
+          type: string
     TeamMember:
       type: object
       required:
@@ -368,6 +378,13 @@ components:
           type: string
           format: date-time
     NewMerchant:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+            type: string
+    UpdateMerchant:
       type: object
       required:
         - code

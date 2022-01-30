@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/sanekee/merchant-api/backend/internal/model"
 )
@@ -13,8 +12,8 @@ import (
 type MerchantRepo interface {
 	GetAll(model.Pagination) ([]*model.Merchant, error)
 	Get(string) (*model.Merchant, error)
-	Insert(*model.Merchant) (*model.Merchant, error)
-	Update(*model.Merchant) (*model.Merchant, error)
+	Insert(*model.NewMerchant) (*model.Merchant, error)
+	Update(string, *model.UpdateMerchant) (*model.Merchant, error)
 	Delete(string) error
 }
 
@@ -60,14 +59,11 @@ func (m *MerchantHandler) create(w http.ResponseWriter, r *http.Request) {
 		ResponseJSON(w, http.StatusBadRequest, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "invalid request"})
 		return
 	}
-	merchant := &model.Merchant{
-		Id:   uuid.NewString(),
-		Code: newMerchant.Code,
-	}
-	created, err := m.merchantRepo.Insert(merchant)
+	created, err := m.merchantRepo.Insert(&newMerchant)
 	if err != nil {
 		code := http.StatusInternalServerError
-		if errors.Is(err, model.ErrDuplicate) {
+		switch true {
+		case errors.Is(err, model.ErrDuplicate):
 			code = http.StatusConflict
 		}
 		ResponseJSON(w, code, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "Error creating merchant"})
@@ -81,8 +77,11 @@ func (m *MerchantHandler) get(w http.ResponseWriter, r *http.Request) {
 	merchant, err := m.merchantRepo.Get(id)
 	if err != nil {
 		code := http.StatusInternalServerError
-		if errors.Is(err, model.ErrNoResults) {
+		switch true {
+		case errors.Is(err, model.ErrNoResults):
 			code = http.StatusNotFound
+		case errors.Is(err, model.ErrRequest):
+			code = http.StatusBadRequest
 		}
 		ResponseJSON(w, code, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "Error getting merchant"})
 		return
@@ -92,16 +91,12 @@ func (m *MerchantHandler) get(w http.ResponseWriter, r *http.Request) {
 
 func (m *MerchantHandler) update(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	var merchant model.Merchant
-	if err := json.NewDecoder(r.Body).Decode(&merchant); err != nil {
+	var mc model.UpdateMerchant
+	if err := json.NewDecoder(r.Body).Decode(&mc); err != nil {
 		ResponseJSON(w, http.StatusBadRequest, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "invalid request"})
 		return
 	}
-	if merchant.Id != id {
-		ResponseJSON(w, http.StatusBadRequest, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "invalid request, merchant id is different"})
-		return
-	}
-	updated, err := m.merchantRepo.Update(&merchant)
+	updated, err := m.merchantRepo.Update(id, &mc)
 	if err != nil {
 		statusCode := http.StatusInternalServerError
 		switch true {
@@ -121,7 +116,8 @@ func (m *MerchantHandler) delete(w http.ResponseWriter, r *http.Request) {
 	err := m.merchantRepo.Delete(id)
 	if err != nil {
 		statusCode := http.StatusInternalServerError
-		if errors.Is(err, model.ErrNoResults) {
+		switch true {
+		case errors.Is(err, model.ErrNoResults):
 			statusCode = http.StatusNotFound
 		}
 		ResponseJSON(w, statusCode, model.CommonResponse{Status: model.CommonResponseStatusError, Message: "Error deleting merchant"})

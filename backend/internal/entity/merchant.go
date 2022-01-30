@@ -3,6 +3,7 @@ package entity
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/sanekee/merchant-api/backend/internal/model"
 )
 
@@ -20,6 +21,25 @@ func MerchantFromSchema(from *model.Merchant) *Merchant {
 		Code:      from.Code,
 		CreatedAt: from.CreatedAt,
 		UpdatedAt: from.UpdatedAt,
+	}
+}
+
+func CreateMerchantFromNewSchema(from *model.NewMerchant) *Merchant {
+	now := time.Now().UTC()
+	return &Merchant{
+		ID:        uuid.NewString(),
+		Code:      from.Code,
+		CreatedAt: &now,
+		UpdatedAt: &now,
+	}
+}
+
+func MerchantFromUpdateSchema(id string, from *model.UpdateMerchant) *Merchant {
+	now := time.Now().UTC()
+	return &Merchant{
+		ID:        id,
+		Code:      from.Code,
+		UpdatedAt: &now,
 	}
 }
 
