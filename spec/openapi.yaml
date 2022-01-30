@@ -62,6 +62,10 @@ paths:
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
           #  ---- /Added line  ----------------------------------------    
+        '409':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/409Error'
+          #  ---- /Added line  ----------------------------------------    
         '500':
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/500Error'
@@ -127,6 +131,10 @@ paths:
         '404':
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/404Error'
+          #  ---- /Added line  ----------------------------------------     
+        '409':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/409Error'
           #  ---- /Added line  ----------------------------------------     
         '500':
           #  ----- Added line  ----------------------------------------
@@ -215,6 +223,10 @@ paths:
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
           #  ---- /Added line  ----------------------------------------    
+        '409':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/409Error'
+          #  ---- /Added line  ----------------------------------------    
         '500':
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/500Error'
@@ -282,6 +294,10 @@ paths:
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
           #  ---- /Added line  ----------------------------------------     
+        '409':
+          #  ----- Added line  ----------------------------------------
+          $ref: '#/components/responses/409Error'
+          #  ---- /Added line  ----------------------------------------     
         '500':
           #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/500Error'
@@ -345,6 +361,12 @@ components:
           type: string
         merchant_id:
           type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
     NewMerchant:
       type: object
       required:
@@ -362,6 +384,12 @@ components:
           type: string
         code:
           type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
     CommonResponse:
       type: object
       required:
@@ -409,6 +437,14 @@ components:
             #  ---- /Added line  ------------------------------------
     404Error:
       description: Not found
+      content:
+        application/json:
+          schema:
+            #  ----- Added line  ------------------------------------
+            $ref: '#/components/schemas/CommonResponse'
+            #  ---- /Added line  ------------------------------------
+    409Error:
+      description: Conflict
       content:
         application/json:
           schema:
