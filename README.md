@@ -43,13 +43,13 @@ Generate Schema
 
 ## Accessing API Doc
 1. After docker containers are running.
-1. SwaggerUI - Browse to [http://127.0.0.1:8123/docs](http://127.0.0.1:8123/docs) to access SwaggerUI documentations.
-1. RapiDoc - Browse to [http://127.0.0.1:8123/docs/rapi](http://127.0.0.1:8123/docs/rapi) to access RapiDoc documentations.
-1. ReDoc - Browse to [http://127.0.0.1:8123/docs/redoc](http://127.0.0.1:8123/docs/redoc) to access Redoc documentations.
-1. To test the API, authorize with the following token
-   ```
-   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTExMTExMSIsIm5hbWUiOiJVc2VyIEEiLCJpYXQiOjE2NDA0MTY3MTN9.SbdB7XjwUDk2iNKegVPG7OEvodf5btXP1UjVCXXWHo0
-   ```
+   1. SwaggerUI - Browse to [http://127.0.0.1:8123/docs](http://127.0.0.1:8123/docs) to access SwaggerUI documentations.
+   1. RapiDoc - Browse to [http://127.0.0.1:8123/docs/rapi](http://127.0.0.1:8123/docs/rapi) to access RapiDoc documentations.
+   1. ReDoc - Browse to [http://127.0.0.1:8123/docs/redoc](http://127.0.0.1:8123/docs/redoc) to access Redoc documentations.
+   1. To test the API, authorize with the following token
+      ```
+      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTExMTExMSIsIm5hbWUiOiJVc2VyIEEiLCJpYXQiOjE2NDA0MTY3MTN9.SbdB7XjwUDk2iNKegVPG7OEvodf5btXP1UjVCXXWHo0
+      ```
 
 ## Testing 
 1. Sample test cases for handlers:
