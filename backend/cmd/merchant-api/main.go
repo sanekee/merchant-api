@@ -33,8 +33,8 @@ func init() {
 
 func main() {
 
-	merchantRepo := mock.NewMerchantRepo(mock.GenerateMerchants(1000))
-	teamMemberRepo := mock.NewTeamMemberRepo(mock.GenerateTeamMembers(1000, "test-0"))
+	merchantRepo := mock.NewMerchantRepo(nil, mock.GenerateMerchants(1000))
+	teamMemberRepo := mock.NewTeamMemberRepo(nil, mock.GenerateTeamMembers(1000, "test-0"))
 	handlers := []MuxHandler{
 		handler.NewDocsHandler("/docs", "/openapi.yaml"),
 		handler.NewMerchantHandler("/merchant", merchantRepo),

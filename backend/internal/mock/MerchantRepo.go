@@ -8,11 +8,12 @@ import (
 )
 
 type MerchantRepo struct {
-	m sync.Map
+	m   sync.Map
+	err error
 }
 
-func NewMerchantRepo(mcs []*model.Merchant) *MerchantRepo {
-	repo := &MerchantRepo{}
+func NewMerchantRepo(retErr error, mcs []*model.Merchant) *MerchantRepo {
+	repo := &MerchantRepo{err: retErr}
 	for _, mc := range mcs {
 		repo.m.Store(mc.Id, mc)
 	}
@@ -20,6 +21,9 @@ func NewMerchantRepo(mcs []*model.Merchant) *MerchantRepo {
 }
 
 func (m *MerchantRepo) GetAll(opt model.Pagination) ([]*model.Merchant, error) {
+	if m.err != nil {
+		return nil, m.err
+	}
 
 	ret := make([]*model.Merchant, 0)
 	if opt.Limit == 0 {
@@ -41,6 +45,10 @@ func (m *MerchantRepo) GetAll(opt model.Pagination) ([]*model.Merchant, error) {
 }
 
 func (m *MerchantRepo) Get(id string) (*model.Merchant, error) {
+	if m.err != nil {
+		return nil, m.err
+	}
+
 	if mc, ok := m.m.Load(id); ok {
 		return mc.(*model.Merchant), nil
 	}
@@ -48,6 +56,10 @@ func (m *MerchantRepo) Get(id string) (*model.Merchant, error) {
 }
 
 func (m *MerchantRepo) Update(mc *model.Merchant) (*model.Merchant, error) {
+	if m.err != nil {
+		return nil, m.err
+	}
+
 	if _, ok := m.m.Load(mc.Id); !ok {
 		return nil, model.ErrNoResults
 	}
@@ -56,6 +68,10 @@ func (m *MerchantRepo) Update(mc *model.Merchant) (*model.Merchant, error) {
 }
 
 func (m *MerchantRepo) Insert(mc *model.Merchant) (*model.Merchant, error) {
+	if m.err != nil {
+		return nil, m.err
+	}
+
 	if _, ok := m.m.Load(mc.Id); ok {
 		return nil, model.ErrNoResults
 	}
@@ -64,6 +80,10 @@ func (m *MerchantRepo) Insert(mc *model.Merchant) (*model.Merchant, error) {
 }
 
 func (m *MerchantRepo) Delete(id string) error {
+	if m.err != nil {
+		return m.err
+	}
+
 	if _, ok := m.m.Load(id); !ok {
 		return model.ErrNoResults
 	}
