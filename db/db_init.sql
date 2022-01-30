@@ -1,0 +1,20 @@
+BEGIN;
+
+SET client_encoding = 'LATIN1';
+
+CREATE TABLE mc_merchant (
+  id VARCHAR(100) PRIMARY KEY,
+  code VARCHAR(100) UNIQUE NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE mc_team_member (
+  id VARCHAR(100) PRIMARY KEY,
+  merchant_id VARCHAR(100) NOT NULL REFERENCES mc_merchant (id),
+  email VARCHAR(100) UNIQUE NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMIT;
