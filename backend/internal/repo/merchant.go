@@ -69,7 +69,7 @@ func (m *MerchantRepo) Update(id string, umc *model.UpdateMerchant) (*model.Merc
 
 func (m *MerchantRepo) Delete(id string) error {
 	res, err := m.db.Model(&entity.Merchant{ID: id}).WherePK().Delete()
-	if res.RowsAffected() == 0 {
+	if res != nil && res.RowsAffected() == 0 {
 		return model.ErrNoResults
 	}
 	return toAppError(err)

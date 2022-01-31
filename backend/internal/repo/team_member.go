@@ -70,7 +70,7 @@ func (t *TeamMemberRepo) Update(id string, umc *model.UpdateTeamMember) (*model.
 
 func (t *TeamMemberRepo) Delete(id string) error {
 	res, err := t.db.Model(&entity.TeamMember{ID: id}).WherePK().Delete()
-	if res.RowsAffected() == 0 {
+	if res != nil && res.RowsAffected() == 0 {
 		return model.ErrNoResults
 	}
 	return toAppError(err)
