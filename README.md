@@ -20,6 +20,11 @@ A Merchant API Demo
    ```
 
 ## Accessing API Doc
+
+1. View online [API Doc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/sanekee/merchant-api/main/spec/openapi.yaml)
+   
+   Or
+
 1. After docker containers are running.
    1. SwaggerUI - Browse to [http://127.0.0.1:8123/docs](http://127.0.0.1:8123/docs) to access SwaggerUI documentations.
    1. RapiDoc - Browse to [http://127.0.0.1:8123/docs/rapi](http://127.0.0.1:8123/docs/rapi) to access RapiDoc documentations.
