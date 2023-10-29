@@ -1,4 +1,4 @@
-FROM golang:1.17 as build
+FROM golang:1.20 as build
 
 WORKDIR /build
 COPY backend .
@@ -6,7 +6,7 @@ RUN go build -a -ldflags "-linkmode external -extldflags -static" -o /build/merc
 
 FROM alpine
 WORKDIR /app
-COPY spec /app/spec
+COPY ./doc /app/doc
 COPY --from=build /build/merchant-api /app
 
 ENTRYPOINT [ "/app/merchant-api" ]

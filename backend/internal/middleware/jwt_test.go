@@ -1,4 +1,4 @@
-package auth
+package middleware
 
 import (
 	"fmt"
@@ -63,7 +63,7 @@ func TestJWTAuth(t *testing.T) {
 			req := httptest.NewRequest(http.MethodGet, "/", nil)
 			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", tt.args.jwt))
 			rec := httptest.NewRecorder()
-			fn(rec, req)
+			fn.ServeHTTP(rec, req)
 
 			assert.Equal(t, tt.want, rec.Code)
 		})

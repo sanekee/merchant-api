@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/sanekee/merchant-api/backend/internal/model"
+	"github.com/sanekee/merchant-api/internal/model"
 )
 
 type Merchant struct {

@@ -4,14 +4,15 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/sanekee/merchant-api/backend/internal/model"
+	"github.com/sanekee/merchant-api/internal/model"
 )
 
-func getPaginationFromReq(r *http.Request) (model.Pagination, error) {
+func GetPaginationFromReq(r *http.Request) (model.Pagination, error) {
 	opt := model.Pagination{Limit: 10, Offset: 0}
 	params := r.URL.Query()
 	limitStr := params.Get("limit")
 	offsetStr := params.Get("offset")
+
 	if len(limitStr) > 0 {
 		limit, err := strconv.ParseInt(limitStr, 10, 32)
 		if err != nil {
@@ -19,6 +20,7 @@ func getPaginationFromReq(r *http.Request) (model.Pagination, error) {
 		}
 		opt.Limit = int(limit)
 	}
+
 	if len(offsetStr) > 0 {
 		offset, err := strconv.ParseInt(offsetStr, 10, 32)
 		if err != nil {
@@ -26,5 +28,6 @@ func getPaginationFromReq(r *http.Request) (model.Pagination, error) {
 		}
 		opt.Offset = int(offset)
 	}
+
 	return opt, nil
 }

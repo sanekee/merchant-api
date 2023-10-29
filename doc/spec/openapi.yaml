@@ -2,78 +2,69 @@ openapi: 3.0.0
 info:
   version: 0.0.1
   title: Merchant API
-  description: A Simple Merchant API 
+  description: A Simple Merchant API Demo
 
 servers:
-  - url: http://127.0.0.1:8123
+  - url: http://127.0.0.1:8123/api
 
 security:
   - BearerAuth: []
 
 paths:
-  /merchant:
+  /merchants:
     get:
-      description: Returns a list of merchants
+      summary: List all merchants
+      operationId: "getMerchants"
+      tags:
+        - merchants
       parameters:
-        #  ----- Added line  ------------------------------------------
         - $ref: '#/components/parameters/PageLimit'
         - $ref: '#/components/parameters/PageOffset'
-        #  ---- /Added line  ------------------------------------------
       responses:
         '200':
-          description: Successfully returned a list of merchants
+          description: Successfully returned a list of merchants.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  #  ----- Added line  --------------------------------
                   $ref: '#/components/schemas/Merchant'
-                  #  ---- /Added line  --------------------------------
         '400':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
-          #  ---- /Added line  ----------------------------------------
         '500':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/500Error'
-          #  ---- /Added line  ----------------------------------------
 
     post:
-      description: create a new merchant
+      summary: Create new merchant
+      operationId: "postMerchants"
+      tags:
+        - merchants
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              #  ----- Added line  ------------------------------------
               $ref: '#/components/schemas/NewMerchant'
-              #  ---- /Added line  ------------------------------------
       responses:
         '201':
-          description: Successfully created a new merchant 
+          description: Successfully created a new merchant.
           content:
             application/json:
               schema:
-                #  ----- Added line  --------------------------------
                 $ref: '#/components/schemas/Merchant'
-                #  ---- /Added line  --------------------------------
         '400':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
-          #  ---- /Added line  ----------------------------------------    
         '409':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/409Error'
-          #  ---- /Added line  ----------------------------------------    
         '500':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/500Error'
-          #  ---- /Added line  ----------------------------------------
 
-  /merchant/{id}:
+  /merchants/{id}:
     get:
-      description: Obtain information about a merchant
+      summary: Get merchant
+      operationId: "getMerchantById"
+      tags:
+        - merchants
       parameters:
         - name: id
           in: path
@@ -83,23 +74,20 @@ paths:
           
       responses:
         '200':
-          description: Successfully returned a merchant
+          description: Successfully retrieved a merchant.
           content:
             application/json:
               schema:
-                #  ----- Added line  ------------------------------------
                 $ref: '#/components/schemas/Merchant'
-                #  ---- /Added line  ------------------------------------
         '404':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/404Error'
-          #  ---- /Added line  ----------------------------------------     
         '500':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/500Error'
-          #  ---- /Added line  ----------------------------------------
     put:
-      description: Update information about a merchant
+      summary: Update merchant
+      operationId: "putMerchantById"
+      tags:
+        - merchants
       parameters:
         - name: id
           in: path
@@ -111,38 +99,29 @@ paths:
         content:
           application/json:
             schema:
-              #  ----- Added line  ------------------------------------
               $ref: '#/components/schemas/UpdateMerchant'
-              #  ---- /Added line  ------------------------------------
           
       responses:
         '200':
-          description: Successfully updated a merchant
+          description: Successfully updated a merchant.
           content:
             application/json:
               schema:
-                #  ----- Added line  ------------------------------------
                 $ref: '#/components/schemas/Merchant'
-                #  ---- /Added line  ------------------------------------
         '400':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
-          #  ---- /Added line  ----------------------------------------     
         '404':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/404Error'
-          #  ---- /Added line  ----------------------------------------     
         '409':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/409Error'
-          #  ---- /Added line  ----------------------------------------     
         '500':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/500Error'
-          #  ---- /Added line  ----------------------------------------
 
     delete:
-      description: Delete a merchant
+      summary: Delete merchant
+      operationId: "deleteMerchantById"
+      tags:
+        - merchants
       parameters:
         - name: id
           in: path
@@ -152,89 +131,75 @@ paths:
           
       responses:
         '200':
-          description: Successfully deleted a merchant
+          description: Successfully deleted a merchant.
           content:
             application/json:
               schema:
-                #  ----- Added line  ------------------------------------
                 $ref: '#/components/schemas/CommonResponse'
-                #  ---- /Added line  ------------------------------------
         '404':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/404Error'
         '500':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/500Error'
-          #  ---- /Added line  ----------------------------------------
 
-  /teammember/merchant/{merchant_id}:
+  /teammembers/merchant/{merchant_id}:
     get:
-      description: Obtain list of team members for a merchant id
+      summary: List all team members by merchant id
+      operationId: "getTeammemberByMerchantId"
+      tags:
+        - teammembers
       parameters:
         - name: merchant_id
           in: path
           required: true
           schema:
             type: string
-        #  ----- Added line  ------------------------------------------
         - $ref: '#/components/parameters/PageLimit'
         - $ref: '#/components/parameters/PageOffset'
-        #  ---- /Added line  ------------------------------------------
           
       responses:
         '200':
-          description: Successfully returned a list of team members
+          description: Successfully returned a list of team members.
           content:
             application/json:
               schema:
-                #  ----- Added line  ------------------------------------
                 $ref: '#/components/schemas/TeamMember'
-                #  ---- /Added line  ------------------------------------
         '400':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
-          #  ---- /Added line  ----------------------------------------     
         '500':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/500Error'
-          #  ---- /Added line  ----------------------------------------     
 
-  /teammember:
+  /teammembers:
     post:
-      description: 'Create a new team member under a merchant'
+      summary: Create team member
+      operationId: "postTeamMember"
+      tags:
+        - teammembers
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              #  ----- Added line  ------------------------------------
               $ref: '#/components/schemas/NewTeamMember'
-              #  ---- /Added line  ------------------------------------
       responses:
         '200':
-          description: Successfully created a new team member 
+          description: Successfully created a new team member.
           content:
             application/json:
               schema:
-                #  ----- Added line  --------------------------------
                 $ref: '#/components/schemas/TeamMember'
-                #  ---- /Added line  --------------------------------
         '400':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
-          #  ---- /Added line  ----------------------------------------    
         '409':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/409Error'
-          #  ---- /Added line  ----------------------------------------    
         '500':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/500Error'
-          #  ---- /Added line  ----------------------------------------    
 
-  /teammember/{id}:
+  /teammembers/{id}:
     get:
-      description: Obtain information about a team member
+      summary: Get team member
+      operationId: "getTeammemberById"
+      tags:
+        - teammembers
       parameters:
         - name: id
           in: path
@@ -244,24 +209,21 @@ paths:
           
       responses:
         '200':
-          description: Successfully returned a team member
+          description: Successfully returned a team member.
           content:
             application/json:
               schema:
-                #  ----- Added line  ------------------------------------
                 $ref: '#/components/schemas/TeamMember'
-                #  ---- /Added line  ------------------------------------
                 
         '404':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/404Error'
-          #  ---- /Added line  ----------------------------------------     
         '500':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/500Error'
-          #  ---- /Added line  ----------------------------------------     
     put:
-      description: Update information about a team member
+      summary: Update team member
+      operationId: "putTeammemberById"
+      tags:
+        - teammembers
       parameters:
         - name: id
           in: path
@@ -273,38 +235,29 @@ paths:
         content:
           application/json:
             schema:
-              #  ----- Added line  ------------------------------------
               $ref: '#/components/schemas/UpdateTeamMember'
-              #  ---- /Added line  ------------------------------------
           
       responses:
         '200':
-          description: Successfully updated a team member
+          description: Successfully updated a team member.
           content:
             application/json:
               schema:
-                #  ----- Added line  ------------------------------------
                 $ref: '#/components/schemas/TeamMember'
-                #  ---- /Added line  ------------------------------------
         '400':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
-          #  ---- /Added line  ----------------------------------------     
         '404':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
-          #  ---- /Added line  ----------------------------------------     
         '409':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/409Error'
-          #  ---- /Added line  ----------------------------------------     
         '500':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/500Error'
-          #  ---- /Added line  ----------------------------------------     
 
     delete:
-      description: Delete a team member
+      summary: Delete team member
+      operationId: "deleteTeammemberById"
+      tags:
+        - teammembers
       parameters:
         - name: id
           in: path
@@ -314,20 +267,15 @@ paths:
           
       responses:
         '200':
-          description: Successfully deleted a team member
+          description: Successfully deleted a team member.
           content:
             application/json:
               schema:
-                #  ----- Added line  ------------------------------------
                 $ref: '#/components/schemas/CommonResponse'
-                #  ---- /Added line  ------------------------------------
         '404':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/400Error'
         '500':
-          #  ----- Added line  ----------------------------------------
           $ref: '#/components/responses/500Error'
-          #  ---- /Added line  ----------------------------------------     
 
 
 components:
@@ -352,11 +300,8 @@ components:
       type: object
       required:
         - email
-        - merchant_id
       properties:
         email:
-          type: string
-        merchant_id:
           type: string
     TeamMember:
       type: object
@@ -421,31 +366,32 @@ components:
         message:
           type: string
 
-  #  ----- Added lines  ----------------------------------------
   parameters:
     PageLimit:
       name: limit
       in: query
-      description: Limits the number of items on a page
-      required: true
+      description: Limits the number of items on a page.
+      required: false
       schema:
         type: integer
         minimum: 0
         maximum: 100
+        default: 10
       
     PageOffset:
       name: offset
       in: query
-      description: Specifies the page number of the item to be displayed
-      required: true
+      description: Specifies the page number of the item to be displayed.
+      required: false
       schema:
         type: integer
         minimum: 0
         maximum: 1000
+        default: 0
 
   responses:
     400Error:
-      description: Invalid request
+      description: Invalid request.
       content:
         application/json:
           schema:
@@ -453,7 +399,7 @@ components:
             $ref: '#/components/schemas/CommonResponse'
             #  ---- /Added line  ------------------------------------
     404Error:
-      description: Not found
+      description: Not found.
       content:
         application/json:
           schema:
@@ -461,7 +407,7 @@ components:
             $ref: '#/components/schemas/CommonResponse'
             #  ---- /Added line  ------------------------------------
     409Error:
-      description: Conflict
+      description: Conflict.
       content:
         application/json:
           schema:
@@ -469,7 +415,7 @@ components:
             $ref: '#/components/schemas/CommonResponse'
             #  ---- /Added line  ------------------------------------
     500Error:
-      description: Internal Server Error
+      description: Internal Server Error.
       content:
         application/json:
           schema:

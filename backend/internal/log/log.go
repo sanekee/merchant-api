@@ -20,3 +20,9 @@ func Error(fmtStr string, args ...interface{}) {
 func Warn(fmtStr string, args ...interface{}) {
 	log.Printf("[ERR] %s\n", fmt.Sprintf(fmtStr, args...))
 }
+
+type Logger struct{}
+
+func (l Logger) Println(args ...any) {
+	log.Println(args...)
+}

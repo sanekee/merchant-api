@@ -1,23 +1,13 @@
 package model
 
-import "fmt"
-
-var (
-	ErrNoResults = Errorf("error: no results")
-	ErrExists    = Errorf("error: record exists")
-	ErrRequest   = Errorf("error: bad request")
-	ErrServer    = Errorf("error: internal server error")
-	ErrDuplicate = Errorf("error: duplicated record")
+import (
+	"errors"
 )
 
-type Error struct {
-	s string
-}
-
-func Errorf(s string, args ...interface{}) Error {
-	return Error{s: fmt.Sprintf(s, args...)}
-}
-
-func (err Error) Error() string {
-	return err.s
-}
+var (
+	ErrNoResults = errors.New("error: no results")
+	ErrExists    = errors.New("error: record exists")
+	ErrRequest   = errors.New("error: bad request")
+	ErrServer    = errors.New("error: internal server error")
+	ErrDuplicate = errors.New("error: duplicated record")
+)

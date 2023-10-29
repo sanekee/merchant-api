@@ -16,3 +16,5 @@
 *.code-workspace
 .vscode
 
+.bash_profile
+__debug*

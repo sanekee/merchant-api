@@ -4,23 +4,20 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/mux"
-	"github.com/sanekee/merchant-api/backend/internal/db"
-	"github.com/sanekee/merchant-api/backend/internal/handler"
-	"github.com/sanekee/merchant-api/backend/internal/log"
-	"github.com/sanekee/merchant-api/backend/internal/mock"
-	"github.com/sanekee/merchant-api/backend/internal/repo"
+	"github.com/go-openapi/runtime/middleware"
+	"github.com/sanekee/limi"
+	limimw "github.com/sanekee/limi/middleware"
+	"github.com/sanekee/merchant-api/internal/handler/merchants"
+	"github.com/sanekee/merchant-api/internal/handler/teammembers"
+	"github.com/sanekee/merchant-api/internal/log"
+	mw "github.com/sanekee/merchant-api/internal/middleware"
+	"github.com/sanekee/merchant-api/internal/repo"
 	go_up "github.com/ufoscout/go-up"
 )
-
-type MuxHandler interface {
-	RegisterMux(r *mux.Router)
-}
 
 var (
 	port    int
 	docPath string
-	mockDB  bool
 	pgUser  string
 	pgPass  string
 	pgHost  string
@@ -37,7 +34,6 @@ func init() {
 	}
 	port = up.GetIntOrDefault("APP_PORT", 8123)
 	docPath = up.GetStringOrDefault("APP_SPEC", "./spec")
-	mockDB = up.GetBoolOrDefault("APP_MOCKDB", true)
 
 	pgUser = up.GetStringOrDefault("POSTGRES_USER", "mapi")
 	pgPass = up.GetStringOrDefault("POSTGRES_PASSWORD", "mypostgres")
@@ -48,30 +44,56 @@ func init() {
 
 func main() {
 
-	var merchantRepo handler.MerchantRepo
-	var teamMemberRepo handler.TeamMemberRepo
+	db := repo.NewPGDB(pgHost, pgDB, pgPort, pgUser, pgPass)
+	merchantRepo := repo.NewMerchantRepo(db)
+	teamMemberRepo := repo.NewTeamMemberRepo(db)
 
-	if mockDB {
-		merchantRepo = mock.NewMerchantRepo(nil, mock.GenerateMerchants(1000))
-		teamMemberRepo = mock.NewTeamMemberRepo(nil, mock.GenerateTeamMembers(1000, "test-0"))
-	} else {
-		db := db.NewPGDB(pgHost, pgDB, pgPort, pgUser, pgPass)
-		merchantRepo = repo.NewMerchantRepo(db)
-		teamMemberRepo = repo.NewTeamMemberRepo(db)
-	}
-	handlers := []MuxHandler{
-		handler.NewDocsHandler("/docs", "/openapi.yaml"),
-		handler.NewMerchantHandler("/merchant", merchantRepo),
-		handler.NewTeamMemberHandler("/teammember", teamMemberRepo),
+	mux := limi.Mux()
+
+	// api router with JWT auth
+	r, err := mux.AddRouter(
+		"/api",
+		limi.WithMiddlewares(
+			limimw.Log(log.Logger{}),
+			mw.CORS,
+			mw.JWTAuth,
+		),
+	)
+	if err != nil {
+		panic(err)
 	}
 
-	r := mux.NewRouter()
-	for _, h := range handlers {
-		h.RegisterMux(r)
+	if err := r.AddHandlers([]limi.Handler{
+		merchants.NewMerchants(merchantRepo),
+		merchants.NewMerchant(merchantRepo),
+		teammembers.NewTeamMembers(teamMemberRepo),
+		teammembers.NewTeamMembersByMerchant(teamMemberRepo),
+		teammembers.NewTeamMember(teamMemberRepo),
+	}); err != nil {
+		panic(err)
 	}
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir(docPath)))
+
+	// a general router
+	r1, err := mux.AddRouter(
+		"/",
+		limi.WithMiddlewares(
+			limimw.Log(log.Logger{}),
+		),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := r1.AddHTTPHandler("/spec/", http.FileServer(http.Dir(docPath))); err != nil {
+		panic(err)
+	}
+
+	rapiddoc := middleware.RapiDoc(middleware.RapiDocOpts{SpecURL: "/spec/openapi.yaml", Path: "/docs"}, nil)
+	if err := r1.AddHTTPHandler("/docs", rapiddoc); err != nil {
+		panic(err)
+	}
 
 	listenPort := fmt.Sprintf(":%d", port)
 	log.Info("Start listening %s", listenPort)
-	http.ListenAndServe(listenPort, r)
+	http.ListenAndServe(listenPort, mux)
 }

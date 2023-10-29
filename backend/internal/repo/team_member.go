@@ -2,8 +2,8 @@ package repo
 
 import (
 	"github.com/go-pg/pg/v10"
-	"github.com/sanekee/merchant-api/backend/internal/entity"
-	"github.com/sanekee/merchant-api/backend/internal/model"
+	"github.com/sanekee/merchant-api/internal/entity"
+	"github.com/sanekee/merchant-api/internal/model"
 )
 
 type TeamMemberRepo struct {
@@ -38,26 +38,29 @@ func (t *TeamMemberRepo) Get(id string) (*model.TeamMember, error) {
 		ID: id,
 	}
 
-	err := t.db.Model(&tm).WherePK().Select()
-	if err != nil {
+	if err := t.db.Model(&tm).WherePK().Select(); err != nil {
 		return nil, toAppError(err)
 	}
+
 	return tm.ToSchema(), nil
 }
 
 func (t *TeamMemberRepo) Insert(ntm *model.NewTeamMember) (*model.TeamMember, error) {
 	ent := entity.CreateTeamMemberFromNewSchema(ntm)
+
 	_, err := t.db.Model(ent).
 		Returning("*").
 		Insert()
 	if err != nil {
 		return nil, toAppError(err)
 	}
+
 	return ent.ToSchema(), nil
 }
 
 func (t *TeamMemberRepo) Update(id string, umc *model.UpdateTeamMember) (*model.TeamMember, error) {
 	ent := entity.TeamMemberFromUpdateSchema(id, umc)
+
 	_, err := t.db.Model(ent).
 		WherePK().
 		Returning("*").
@@ -65,6 +68,7 @@ func (t *TeamMemberRepo) Update(id string, umc *model.UpdateTeamMember) (*model.
 	if err != nil {
 		return nil, toAppError(err)
 	}
+
 	return ent.ToSchema(), nil
 }
 
@@ -73,5 +77,6 @@ func (t *TeamMemberRepo) Delete(id string) error {
 	if res != nil && res.RowsAffected() == 0 {
 		return model.ErrNoResults
 	}
+
 	return toAppError(err)
 }

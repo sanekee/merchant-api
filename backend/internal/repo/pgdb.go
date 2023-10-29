@@ -1,10 +1,10 @@
-package db
+package repo
 
 import (
 	"fmt"
 
 	"github.com/go-pg/pg/v10"
-	"github.com/sanekee/merchant-api/backend/internal/log"
+	"github.com/sanekee/merchant-api/internal/log"
 )
 
 func NewPGDB(pgHost string, pgDB string, pgPort int, pgUser string, pgPass string) *pg.DB {
