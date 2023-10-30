@@ -48,10 +48,8 @@ func main() {
 	merchantRepo := repo.NewMerchantRepo(db)
 	teamMemberRepo := repo.NewTeamMemberRepo(db)
 
-	mux := limi.Mux()
-
 	// api router with JWT auth
-	r, err := mux.AddRouter(
+	r1, err := limi.NewRouter(
 		"/api",
 		limi.WithMiddlewares(
 			limimw.Log(log.Logger{}),
@@ -63,7 +61,7 @@ func main() {
 		panic(err)
 	}
 
-	if err := r.AddHandlers([]limi.Handler{
+	if err := r1.AddHandlers([]limi.Handler{
 		merchants.NewMerchants(merchantRepo),
 		merchants.NewMerchant(merchantRepo),
 		teammembers.NewTeamMembers(teamMemberRepo),
@@ -74,7 +72,7 @@ func main() {
 	}
 
 	// a general router
-	r1, err := mux.AddRouter(
+	r2, err := limi.NewRouter(
 		"/",
 		limi.WithMiddlewares(
 			limimw.Log(log.Logger{}),
@@ -84,16 +82,18 @@ func main() {
 		panic(err)
 	}
 
-	if err := r1.AddHTTPHandler("/spec/", http.FileServer(http.Dir(docPath))); err != nil {
+	if err := r2.AddHTTPHandler("/spec/", http.FileServer(http.Dir(docPath))); err != nil {
 		panic(err)
 	}
 
 	rapiddoc := middleware.RapiDoc(middleware.RapiDocOpts{SpecURL: "/spec/openapi.yaml", Path: "/docs"}, nil)
-	if err := r1.AddHTTPHandler("/docs", rapiddoc); err != nil {
+	if err := r2.AddHTTPHandler("/docs", rapiddoc); err != nil {
 		panic(err)
 	}
 
 	listenPort := fmt.Sprintf(":%d", port)
 	log.Info("Start listening %s", listenPort)
+
+	mux := limi.NewMux(r1, r2)
 	http.ListenAndServe(listenPort, mux)
 }

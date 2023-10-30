@@ -7,7 +7,7 @@ require (
 	github.com/go-pg/pg/v10 v10.11.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.4.0
-	github.com/sanekee/limi v0.1.0
+	github.com/sanekee/limi v0.1.1
 	github.com/stretchr/testify v1.8.4
 	github.com/ufoscout/go-up v0.6.1
 )
