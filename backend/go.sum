@@ -167,8 +167,8 @@ github.com/rogpeppe/go-internal v1.2.2/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFR
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.11.0 h1:cWPaGQEPrBb5/AsnsZesgZZ9yb1OQ+GOISoDNXVBh4M=
 github.com/rogpeppe/go-internal v1.11.0/go.mod h1:ddIwULY96R17DhadqLgMfk9H9tvdUzkipdSkR5nkCZA=
-github.com/sanekee/limi v0.1.1 h1:kU7ab8awYX6Oj1gi0MxGCtsPl2avFrO/xHjDsbiCozE=
-github.com/sanekee/limi v0.1.1/go.mod h1:eJX67JHeILmikq+NsnNyLQhtGa5x3WyNBuEMtIeFMUg=
+github.com/sanekee/limi v0.1.5 h1:ExfoJ1Bn1NtlCfC7nRR65LaeC/E1/Vts9xnjsv5wXtI=
+github.com/sanekee/limi v0.1.5/go.mod h1:eJX67JHeILmikq+NsnNyLQhtGa5x3WyNBuEMtIeFMUg=
 github.com/sirupsen/logrus v1.4.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.1/go.mod h1:ni0Sbl8bgC9z8RoU9G6nDWqqs/fq4eDPysMBDgk/93Q=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=

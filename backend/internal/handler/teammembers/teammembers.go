@@ -54,7 +54,7 @@ func (t TeamMembers) Post(w http.ResponseWriter, r *http.Request) {
 }
 
 type TeamMembersByMerchant struct {
-	limi           struct{} `path:"merchant/{merchant_id}"`
+	_              struct{} `limi:"path=merchant/{merchant_id}"`
 	teamMemberRepo TeamMemberRepo
 }
 
@@ -83,7 +83,7 @@ func (t TeamMembersByMerchant) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 type TeamMember struct {
-	limi           struct{} `path:"{id}"`
+	_              struct{} `limi:"path={id}"`
 	teamMemberRepo TeamMemberRepo
 }
 

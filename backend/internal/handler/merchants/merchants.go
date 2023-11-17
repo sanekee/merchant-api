@@ -67,7 +67,7 @@ func (m *Merchants) Post(w http.ResponseWriter, r *http.Request) {
 }
 
 type Merchant struct {
-	limi         struct{} `path:"{id}"`
+	_            struct{} `limi:"path={id}"`
 	merchantRepo MerchantRepo
 }
 
